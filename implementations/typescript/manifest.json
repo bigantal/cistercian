@@ -1,0 +1,9 @@
+{
+  "language": "TypeScript",
+  "requires": [
+    {"tool": "node", "min_version": "20.19"},
+    {"tool": "npm"}
+  ],
+  "build": ["npm", "run", "conformance-build"],
+  "run": ["node", "dist/cli.js"]
+}

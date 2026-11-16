@@ -174,6 +174,8 @@ def test_cli_exit_codes(tmp_path, monkeypatch, capsys):
 
 def test_implementations_do_not_use_judge_internals():
     for path in runner.IMPLEMENTATIONS.rglob("*"):
+        if {"node_modules", "dist", "build", "target", "__pycache__"} & set(path.parts):
+            continue
         if path.is_file() and path.suffix not in {".md", ".json"}:
             text = path.read_text(encoding="utf-8", errors="replace")
             assert "judge" not in text, f"{path} references the judge"

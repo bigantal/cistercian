@@ -26,6 +26,15 @@ step "Judge unit tests" "$PYTHON" -m pytest
 step "Digit chart is up to date" "$PYTHON" scripts/render_digit_chart.py --check
 step "Conformance of all implementations" "$PYTHON" -m judge.runner --all
 
+web_checks() {
+  if ! command -v npm >/dev/null 2>&1; then
+    echo "npm not found: website NOT tested"
+    return 3
+  fi
+  (cd web && npm ci --no-audit --no-fund --loglevel=error && npm test && npm run build)
+}
+step "Website tests and build" web_checks
+
 echo
 case $status in
   0) echo "ALL PASSED" ;;

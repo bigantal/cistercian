@@ -1,0 +1,23 @@
+{
+  "name": "cistercian-typescript",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cistercian numeral encoder (TypeScript) with a Node CLI adapter",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/encoder.ts"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "conformance-build": "npm ci --no-audit --no-fund --loglevel=error && tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.43",
+    "typescript": "7.0.2"
+  }
+}

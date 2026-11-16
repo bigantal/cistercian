@@ -2,7 +2,7 @@
 
 Medieval Cistercian numerals write any integer from 1 to 9,999 as a single glyph: four digit motifs arranged around a vertical stem. This repository defines the glyph geometry precisely and tests encoders written in several languages against it.
 
-> **Status:** work in progress (Stage 2: conformance runner and Python implementation). The full README arrives with the website and CI stages.
+> **Status:** work in progress (Stage 3: TypeScript implementation and website). The full README arrives with the website and CI stages.
 
 - [SPECIFICATION.md](SPECIFICATION.md): convention, grid, digit table and JSON contract v1
 - [docs/references.md](docs/references.md): historical sources and variants
@@ -28,6 +28,7 @@ python3 -m judge.runner --all                 # every implementation
 | Language | Directory | Toolchain |
 |---|---|---|
 | Python | [implementations/python](implementations/python) | Python ≥ 3.10, standard library only |
+| TypeScript | [implementations/typescript](implementations/typescript) | Node.js ≥ 20.19, npm (TypeScript 7 dev dependency) |
 
 Each implementation is independent of the judge. It follows the CLI protocol and manifest format in [SPECIFICATION.md](SPECIFICATION.md) §11–12.
 
@@ -44,3 +45,15 @@ python3 scripts/render_digit_chart.py
 ```
 
 The test suite fails if you forget.
+
+## Website
+
+The website in [`web/`](web) is a static Vite + TypeScript page with SVG rendering. It imports the encoder from `implementations/typescript/src/encoder.ts` through the `cistercian-encoder` alias. The page uses only relative asset paths, so the built `web/dist/` works when served from any directory.
+
+```bash
+cd web
+npm ci
+npm run dev      # local development server
+npm test         # renderer and input tests (Vitest)
+npm run build    # static site in web/dist/
+```

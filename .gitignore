@@ -3,3 +3,5 @@
 __pycache__/
 .pytest_cache/
 /docs/PROJECT_KICKOFF.md
+node_modules/
+dist/
