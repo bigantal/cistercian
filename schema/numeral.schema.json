@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Cistercian numeral geometry, contract v1",
+  "description": "Line segments on the integer grid x 0..2, y 0..3 (origin top-left, y down). Structural shape only: segment direction, zero length, the mandatory stem and float-vs-integer distinctions (JSON Schema treats 1.0 as an integer) are enforced by judge/geometry.py. See SPECIFICATION.md section 8.",
+  "type": "object",
+  "required": ["segments"],
+  "additionalProperties": false,
+  "properties": {
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/segment" }
+    }
+  },
+  "$defs": {
+    "segment": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "$ref": "#/$defs/point" }
+    },
+    "point": {
+      "type": "array",
+      "minItems": 2,
+      "prefixItems": [
+        { "type": "integer", "minimum": 0, "maximum": 2 },
+        { "type": "integer", "minimum": 0, "maximum": 3 }
+      ],
+      "items": false
+    }
+  }
+}
