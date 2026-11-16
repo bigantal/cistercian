@@ -1,0 +1,5 @@
+{
+  "language": "Python",
+  "requires": [{"tool": "python3", "min_version": "3.10"}],
+  "run": ["python3", "-m", "cistercian"]
+}

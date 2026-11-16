@@ -194,3 +194,66 @@ This makes segment order, endpoint direction, splitting or merging of collinear 
   - hand-derived edge cases 1001, 1010 and 202 (zero digits, and 2 vs 200), which the owner reviewed in Stage 1. They are marked `derived-reviewed-stage1`.
 - The reference encoder (`judge/reference.py`) is tested against this file.
 - The tests also show that replacing any digit's motif with another digit's motif (including the 6/8 swap) or using the wrong quadrant reflection makes the fixture tests fail.
+
+## 11. CLI protocol (every implementation)
+
+Each implementation has an encoding library that other code can import. It also has a thin command-line adapter that behaves exactly as follows. `judge/runner.py` checks this behavior.
+
+**Input**
+- The program reads stdin as bytes. Lines are separated by `\n`. The last line may omit its `\n`.
+- A **valid line** matches `^[1-9][0-9]{0,3}$` exactly, which means 1 to 9999 written as plain digits.
+- Anything else is invalid. That includes:
+  - an empty line, `0`, `10000`;
+  - a sign (`-1`, `+1`), a leading zero (`01`);
+  - any whitespace, including a trailing `\r` (so CRLF input is invalid);
+  - decimals or exponents (`1.0`, `1e3`), digit separators (`1_000`);
+  - non-ASCII digits (`１`, `١`) and invalid UTF-8.
+- Empty input (zero bytes) is valid. It produces no output and exit status 0.
+
+**Output for valid lines**
+- Each valid line produces exactly one line on stdout, in input order. The line is one JSON object following contract v1 (§8) and ends with `\n`, never `\r\n`.
+- The output should be compact. The judge compares normalized geometry, so segment order and endpoint direction are free.
+- Nothing else is written to stdout: no banners, logs or colour codes. Output must be deterministic. Repeated inputs give repeated outputs.
+
+**Invalid input**
+- At the **first** invalid line, the program:
+  1. makes sure stdout holds exactly the responses for the valid lines before it;
+  2. writes a diagnostic to stderr that contains `line N`, where N is the 1-based line number;
+  3. exits with status **2**, without reading or answering any further lines.
+- The other exit statuses are **0** for success, and any other nonzero value for an internal error, which the judge treats as a failure.
+
+**Process model:** the judge starts the program once per batch, sending all 9,999 numbers on stdin, so start-up cost is paid only once.
+
+## 12. Implementation manifest
+
+Each implementation lives in `implementations/<name>/` and has a `manifest.json`. The runner discovers implementations through these manifests. Example:
+
+```json
+{
+  "language": "Python",
+  "requires": [{"tool": "python3", "min_version": "3.10"}],
+  "build": ["make"],
+  "run": ["python3", "-m", "cistercian"]
+}
+```
+
+| Key | Required | Meaning |
+|---|---|---|
+| `language` | yes | Display name. |
+| `run` | yes | The command that starts the CLI adapter, given as a list of arguments. It runs with the implementation directory as the working directory. |
+| `build` | no | A command, also a list of arguments, run once before testing. A nonzero exit is a **build** failure. |
+| `requires` | no | Tools that must be on `PATH`. `min_version` is compared with the first `X.Y[.Z]` found in the output of `<tool> <version_args>`; `version_args` defaults to `["--version"]`. A missing or too-old tool makes the result **UNAVAILABLE**, never PASS. |
+
+Unknown keys are rejected. Commands are always run as argument lists, never through a shell. Manifests are maintained by the repository maintainers and are not a channel for untrusted code.
+
+Result categories reported by the runner:
+
+| Category | Meaning |
+|---|---|
+| requirements | A required tool is missing or too old. |
+| build | The build command failed. |
+| protocol | Wrong exit status, wrong number of lines, a timeout or a crash. |
+| contract | Output is not a valid v1 numeral. |
+| geometry | Output is a valid numeral but draws the wrong glyph. |
+
+`python -m judge.runner` exits **0** when everything passed, **1** when anything failed, and **3** when nothing failed but some implementation could not be tested.
