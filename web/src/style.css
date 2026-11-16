@@ -101,18 +101,28 @@ input[aria-invalid="true"] { border-color: var(--error); }
 .hint { margin: 0.3rem 0 0; color: var(--faint); font-size: 0.85rem; }
 .error { color: var(--error); min-height: 1.5em; margin: 0.25rem 0 0.5rem; font-size: 0.95rem; }
 
-.examples { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.examples + .examples { margin-top: 0.75rem; }
+.examples-label {
+  display: block;
+  color: var(--faint);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.35rem;
+}
+.examples-buttons { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .examples button {
   font: inherit;
   font-variant-numeric: tabular-nums;
-  padding: 0.3rem 0.85rem;
+  min-width: 2.6rem;
+  padding: 0.25rem 0.75rem;
   border: 1px solid var(--accent);
   border-radius: 999px;
   background: transparent;
   color: var(--accent);
   cursor: pointer;
 }
-.examples button:hover { background: var(--accent); color: var(--accent-ink); }
+.examples button:hover, .examples button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 .examples button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 .glyph-frame {

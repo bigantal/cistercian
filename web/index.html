@@ -25,11 +25,29 @@
                  value="1986" aria-describedby="number-hint number-error" />
           <p id="number-hint" class="hint">1 – 9,999</p>
           <p id="number-error" class="error" role="alert" aria-live="polite"></p>
-          <div class="examples" role="group" aria-label="Examples">
-            <button type="button" data-example="1986">1986</button>
-            <button type="button" data-example="7085">7085</button>
-            <button type="button" data-example="9999">9999</button>
-            <button type="button" data-example="1">1</button>
+          <div class="examples" role="group" aria-labelledby="examples-four">
+            <span class="examples-label" id="examples-four">Four digits</span>
+            <div class="examples-buttons">
+              <button type="button" data-example="1986">1986</button>
+              <button type="button" data-example="7085">7085</button>
+              <button type="button" data-example="1111">1111</button>
+              <button type="button" data-example="3333">3333</button>
+              <button type="button" data-example="4444">4444</button>
+              <button type="button" data-example="5555">5555</button>
+              <button type="button" data-example="6666">6666</button>
+              <button type="button" data-example="9999">9999</button>
+            </div>
+          </div>
+          <div class="examples" role="group" aria-labelledby="examples-fewer">
+            <span class="examples-label" id="examples-fewer">Fewer digits</span>
+            <div class="examples-buttons">
+              <button type="button" data-example="1">1</button>
+              <button type="button" data-example="9">9</button>
+              <button type="button" data-example="55">55</button>
+              <button type="button" data-example="365">365</button>
+              <button type="button" data-example="404">404</button>
+              <button type="button" data-example="808">808</button>
+            </div>
           </div>
         </div>
 

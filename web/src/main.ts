@@ -27,8 +27,13 @@ function cell(text: string): HTMLTableCellElement {
   return td;
 }
 
+const exampleButtons = [...document.querySelectorAll<HTMLButtonElement>("[data-example]")];
+
 function show(raw: string): void {
   const parsed = parseNumber(raw);
+  for (const button of exampleButtons) {
+    button.setAttribute("aria-pressed", String(parsed.ok && String(parsed.value) === button.dataset.example));
+  }
   input.setAttribute("aria-invalid", String(!parsed.ok));
   // Keep the last valid result visible but dimmed, so it is not mistaken for the current input.
   document.body.classList.toggle("stale", !parsed.ok);
@@ -54,7 +59,7 @@ function show(raw: string): void {
 }
 
 input.addEventListener("input", () => show(input.value));
-for (const button of document.querySelectorAll<HTMLButtonElement>("[data-example]")) {
+for (const button of exampleButtons) {
   button.addEventListener("click", () => {
     input.value = button.dataset.example ?? "";
     show(input.value);
