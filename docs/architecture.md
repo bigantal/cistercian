@@ -42,6 +42,11 @@ npm test         # Vitest
 npm run build    # static site in web/dist/
 ```
 
+The page has two input views:
+
+- **Type:** a text box plus example buttons.
+- **Dials:** four rolling digit wheels (`web/src/dial.ts`), each placed beside the corner it controls. Turning a wheel highlights that corner's strokes, which come from the encoder's `digitSegments`.
+
 The SVG renderer (`web/src/render.ts`) is presentation only. It maps grid coordinates to pixels and draws exactly the segments the encoder returns. It has no knowledge of which strokes make up a digit.
 
 Vite's `base: "./"` makes every asset URL relative, so `web/dist/` works at a GitHub Pages project URL without knowing the repository name.

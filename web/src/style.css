@@ -54,9 +54,11 @@ h1 { font-size: clamp(1.4rem, 3.5vw, 1.9rem); margin: 0; letter-spacing: -0.01em
 /* ---------------------------------------------------------------- stage: input + glyph */
 
 .stage {
+  --glyph-h: min(48vh, 26rem);
   display: grid;
   gap: 1.25rem;
   align-items: center;
+  grid-template-areas: "switch" "controls" "glyph";
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 1rem;
@@ -66,11 +68,39 @@ h1 { font-size: clamp(1.4rem, 3.5vw, 1.9rem); margin: 0; letter-spacing: -0.01em
 
 @media (min-width: 44rem) {
   .stage {
+    --glyph-h: min(60vh, 28rem);
     grid-template-columns: minmax(14rem, 1fr) 1.2fr;
-    padding: 2rem 2.5rem;
-    min-height: min(34rem, 72vh);
+    grid-template-areas: "switch switch" "controls glyph";
+    padding: 1.5rem 2.5rem 2rem;
+    min-height: min(36rem, 76vh);
   }
 }
+
+.controls { grid-area: controls; }
+.glyph-frame { grid-area: glyph; }
+
+/* View switch: Type | Dials */
+.view-switch {
+  grid-area: switch;
+  justify-self: center;
+  display: inline-flex;
+  padding: 0.2rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+}
+.view-switch button {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.25rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.view-switch button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
+.view-switch button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 label {
   display: block;
@@ -135,16 +165,127 @@ input[aria-invalid="true"] { border-color: var(--error); }
 
 #glyph {
   display: block;
-  height: min(48vh, 26rem);
+  height: var(--glyph-h);
   width: auto;
   max-width: 100%;
   aspect-ratio: 168 / 228;
 }
-@media (min-width: 44rem) {
-  #glyph { height: min(60vh, 28rem); }
-}
 #glyph .grid-dots { fill: var(--dot); }
 #glyph .strokes { stroke: var(--ink); }
+#glyph .highlight { stroke: var(--accent); }
+
+/* ---------------------------------------------------------------- dials view */
+
+.dial-slot, .dial-message, .dial-readout { display: none; }
+
+.stage[data-view="dials"] {
+  --cell: 2.2rem;
+  --dial-w: 3.4rem;
+  --dial-h: calc(3 * var(--cell));
+  /* Fit glyph + two dial columns into narrow screens (glyph aspect 168:228). */
+  --glyph-h: min(52vh, 28rem, (100vw - 2 * var(--dial-w) - 7rem) * 1.357);
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto calc(var(--glyph-h) / 2) calc(var(--glyph-h) / 2) auto;
+  grid-template-areas:
+    "switch switch switch"
+    "tens glyph units"
+    "thousands glyph hundreds"
+    "readout readout readout"
+    "message message message";
+  justify-content: center;
+  column-gap: clamp(0.75rem, 4vw, 2.5rem);
+  row-gap: 0;
+}
+.stage[data-view="dials"] .controls { display: none; }
+.stage[data-view="dials"] .view-switch { margin-bottom: 2rem; }
+@media (max-width: 43.99rem) {
+  .stage[data-view="dials"] { --cell: 1.8rem; --dial-w: 2.9rem; }
+  .stage[data-view="dials"] .dial-cell { font-size: 1.25rem; }
+}
+.stage[data-view="dials"] .glyph-frame { align-self: center; }
+.stage[data-view="dials"] .dial-slot { display: block; position: relative; }
+.stage[data-view="dials"] .dial-message { display: block; grid-area: message; text-align: center; margin: 0.25rem 0 0; }
+.stage[data-view="dials"] .dial-readout {
+  display: block;
+  grid-area: readout;
+  margin: 1.5rem 0 0;
+  text-align: center;
+  font-size: clamp(2.2rem, 7vw, 3rem);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.dial-readout .leading-zero { color: var(--line); }
+.dial-readout .active { color: var(--accent); }
+
+/* Centre each dial on its digit square: square centres sit 54/228 of the glyph height from the top/bottom. */
+.dial-slot[data-place="tens"] { grid-area: tens; align-self: start; margin-top: calc(var(--glyph-h) * 54 / 228 - var(--dial-h) / 2); }
+.dial-slot[data-place="units"] { grid-area: units; align-self: start; margin-top: calc(var(--glyph-h) * 54 / 228 - var(--dial-h) / 2); }
+.dial-slot[data-place="thousands"] { grid-area: thousands; align-self: end; margin-bottom: calc(var(--glyph-h) * 54 / 228 - var(--dial-h) / 2); }
+.dial-slot[data-place="hundreds"] { grid-area: hundreds; align-self: end; margin-bottom: calc(var(--glyph-h) * 54 / 228 - var(--dial-h) / 2); }
+
+.dial-label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--faint);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+/* Labels sit on the outer side (above the top wheels, below the bottom ones) so they never meet in the middle. */
+.dial-slot[data-place="tens"] .dial-label, .dial-slot[data-place="units"] .dial-label { bottom: calc(100% + 0.35rem); }
+.dial-slot[data-place="thousands"] .dial-label, .dial-slot[data-place="hundreds"] .dial-label { top: calc(100% + 0.35rem); }
+
+.dial {
+  position: relative;
+  width: var(--dial-w);
+  height: var(--dial-h);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--paper);
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.dial:hover { border-color: var(--accent); }
+.dial:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* Window marking the current digit */
+.dial::after {
+  content: "";
+  position: absolute;
+  inset: var(--cell) 0.3rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  pointer-events: none;
+}
+.dial-window {
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  -webkit-mask-image: linear-gradient(transparent, #000 30%, #000 70%, transparent);
+  mask-image: linear-gradient(transparent, #000 30%, #000 70%, transparent);
+}
+.dial-strip { transform: translateY(calc(var(--offset, 1) * -1 * var(--cell))); }
+.dial-strip.rolling { transition: transform 170ms cubic-bezier(0.2, 0.7, 0.3, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .dial-strip.rolling { transition: none; }
+}
+.dial-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--cell);
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+}
+.dial-cell.current { color: var(--ink); }
 
 /* Last valid result stays visible but dimmed while the input is invalid. */
 .stale #glyph, .stale .about-table, .stale details { opacity: 0.25; }

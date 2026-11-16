@@ -4,7 +4,7 @@
  * digit-to-glyph knowledge; that lives only in the encoder.
  */
 
-import { GRID, type Numeral } from "cistercian-encoder";
+import { GRID, type Numeral, type Segment } from "cistercian-encoder";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -58,6 +58,8 @@ function svgElement<K extends keyof SVGElementTagNameMap>(
 export interface RenderOptions {
   /** Draw faint dots at every grid point (useful for inspecting geometry; off by default). */
   readonly showGrid?: boolean;
+  /** Segments to emphasise on top of the glyph, e.g. one digit's strokes from the encoder. */
+  readonly highlight?: readonly Segment[];
 }
 
 /** Replace the contents of `svg` with the numeral and an accessible title. */
@@ -97,4 +99,17 @@ export function renderNumeral(
     strokes.append(svgElement("line", { ...line }));
   }
   svg.append(strokes);
+
+  if (options.highlight?.length) {
+    const emphasis = svgElement("g", {
+      class: "highlight",
+      "stroke-width": layout.unit * layout.stroke,
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+    });
+    for (const line of toPixelLines({ segments: options.highlight }, layout)) {
+      emphasis.append(svgElement("line", { ...line }));
+    }
+    svg.append(emphasis);
+  }
 }

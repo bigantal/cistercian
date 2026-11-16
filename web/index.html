@@ -18,7 +18,12 @@
     </header>
 
     <main>
-      <section class="stage" aria-label="Number and glyph">
+      <section class="stage" data-view="type" aria-label="Number and glyph">
+        <div class="view-switch" role="group" aria-label="Input style">
+          <button type="button" data-view="type" aria-pressed="true">Type</button>
+          <button type="button" data-view="dials" aria-pressed="false">Dials</button>
+        </div>
+
         <div class="controls">
           <label for="number">Number</label>
           <input id="number" name="number" type="text" inputmode="numeric" maxlength="4" autocomplete="off" spellcheck="false"
@@ -54,6 +59,15 @@
         <figure class="glyph-frame">
           <svg id="glyph" xmlns="http://www.w3.org/2000/svg"></svg>
         </figure>
+
+        <!-- Dials view: one rolling wheel beside each corner it controls. -->
+        <div class="dial-slot" data-place="tens"><span class="dial-label">tens</span></div>
+        <div class="dial-slot" data-place="units"><span class="dial-label">units</span></div>
+        <div class="dial-slot" data-place="thousands"><span class="dial-label">thousands</span></div>
+        <div class="dial-slot" data-place="hundreds"><span class="dial-label">hundreds</span></div>
+        <p id="dial-readout" class="dial-readout" role="status" aria-live="polite" aria-atomic="true"><span
+          data-place="thousands"></span><span data-place="hundreds"></span><span data-place="tens"></span><span data-place="units"></span></p>
+        <p id="dial-message" class="error dial-message" role="status" aria-live="polite"></p>
       </section>
 
       <section class="about" aria-labelledby="about-heading">
