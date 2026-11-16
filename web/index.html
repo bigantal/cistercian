@@ -4,59 +4,72 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Type a number from 1 to 9,999 and see it written as a single medieval Cistercian numeral." />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141416" media="(prefers-color-scheme: dark)" />
     <title>Cistercian numeral explorer</title>
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
-    <header>
-      <h1>Cistercian numeral explorer</h1>
-      <p class="lede">
-        Medieval Cistercian monks wrote any number from 1 to 9,999 as a <strong>single glyph</strong>:
-        a vertical stem with one small mark in each corner. The upper right holds the units, the upper left
-        the tens, the lower right the hundreds and the lower left the thousands. A zero digit leaves its corner empty.
-      </p>
+    <header class="masthead">
+      <h1>Cistercian numerals</h1>
+      <p class="tagline">Any number from 1 to 9,999, written as one medieval glyph.</p>
     </header>
 
     <main>
-      <section class="controls" aria-labelledby="input-heading">
-        <h2 id="input-heading" class="visually-hidden">Choose a number</h2>
-        <label for="number">Number (1–9,999)</label>
-        <input id="number" name="number" type="text" inputmode="numeric" autocomplete="off"
-               value="1986" aria-describedby="number-error" />
-        <p id="number-error" class="error" role="alert" aria-live="polite"></p>
-        <div class="examples" role="group" aria-label="Examples">
-          <span>Try:</span>
-          <button type="button" data-example="1986">1986</button>
-          <button type="button" data-example="7085">7085</button>
-          <button type="button" data-example="9999">9999</button>
-          <button type="button" data-example="1">1</button>
-        </div>
-      </section>
-
-      <section class="glyph-panel" aria-labelledby="glyph-heading">
-        <h2 id="glyph-heading" class="visually-hidden">Glyph</h2>
-        <svg id="glyph" xmlns="http://www.w3.org/2000/svg"></svg>
-      </section>
-
-      <section class="details" aria-labelledby="decomposition-heading">
-        <h2 id="decomposition-heading">How it is built</h2>
-        <table>
-          <thead>
-            <tr><th scope="col">Place</th><th scope="col">Corner</th><th scope="col">Digit</th><th scope="col">Adds</th></tr>
-          </thead>
-          <tbody id="decomposition"></tbody>
-        </table>
-        <figure class="convention">
-          <div class="quadrants" role="img" aria-label="Tens upper left, units upper right, thousands lower left, hundreds lower right">
-            <span>tens</span><span>units</span><span>thousands</span><span>hundreds</span>
+      <section class="stage" aria-label="Number and glyph">
+        <div class="controls">
+          <label for="number">Number</label>
+          <input id="number" name="number" type="text" inputmode="numeric" maxlength="4" autocomplete="off" spellcheck="false"
+                 value="1986" aria-describedby="number-hint number-error" />
+          <p id="number-hint" class="hint">1 – 9,999</p>
+          <p id="number-error" class="error" role="alert" aria-live="polite"></p>
+          <div class="examples" role="group" aria-label="Examples">
+            <button type="button" data-example="1986">1986</button>
+            <button type="button" data-example="7085">7085</button>
+            <button type="button" data-example="9999">9999</button>
+            <button type="button" data-example="1">1</button>
           </div>
-          <figcaption>Corner convention (King 2001)</figcaption>
+        </div>
+
+        <figure class="glyph-frame">
+          <svg id="glyph" xmlns="http://www.w3.org/2000/svg"></svg>
         </figure>
+      </section>
+
+      <section class="about" aria-labelledby="about-heading">
+        <h2 id="about-heading">How it works</h2>
+        <div class="about-grid">
+          <div class="about-text">
+            <p>
+              Cistercian monks wrote numbers as a vertical stem with one small mark in each corner.
+              The <strong>upper right</strong> holds the units, the <strong>upper left</strong> the tens,
+              the <strong>lower right</strong> the hundreds and the <strong>lower left</strong> the thousands.
+              A zero digit simply leaves its corner empty.
+            </p>
+            <figure class="convention">
+              <div class="quadrants" role="img" aria-label="Tens upper left, units upper right, thousands lower left, hundreds lower right">
+                <span>tens</span><span>units</span><span>thousands</span><span>hundreds</span>
+              </div>
+              <figcaption>Corner convention (King 2001)</figcaption>
+            </figure>
+          </div>
+
+          <div class="about-table">
+            <table>
+              <caption class="visually-hidden">How the current number is built</caption>
+              <thead>
+                <tr><th scope="col">Place</th><th scope="col">Corner</th><th scope="col">Digit</th><th scope="col">Adds</th></tr>
+              </thead>
+              <tbody id="decomposition"></tbody>
+            </table>
+          </div>
+        </div>
 
         <details>
           <summary>JSON geometry</summary>
           <p>
-            Line segments on an integer grid, x 0–2 and y 0–3 with the origin at the top left,
+            Line segments on an integer grid (x 0–2, y 0–3, origin top left),
             exactly as produced by the TypeScript encoder.
           </p>
           <pre id="json"></pre>
@@ -66,9 +79,9 @@
 
     <footer>
       <p>
-        Drawn with SVG from the TypeScript encoder in
+        Drawn with SVG by the TypeScript encoder in
         <a href="https://github.com/bigantal/cistercian">github.com/bigantal/cistercian</a>,
-        which is tested against the same suite as every other implementation.
+        tested against the same suite as every other implementation.
       </p>
     </footer>
 

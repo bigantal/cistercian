@@ -55,8 +55,19 @@ function svgElement<K extends keyof SVGElementTagNameMap>(
   return element;
 }
 
-/** Replace the contents of `svg` with the numeral, grid dots and an accessible title. */
-export function renderNumeral(svg: SVGSVGElement, numeral: Numeral, label: string, layout: Layout = DEFAULT_LAYOUT): void {
+export interface RenderOptions {
+  /** Draw faint dots at every grid point (useful for inspecting geometry; off by default). */
+  readonly showGrid?: boolean;
+}
+
+/** Replace the contents of `svg` with the numeral and an accessible title. */
+export function renderNumeral(
+  svg: SVGSVGElement,
+  numeral: Numeral,
+  label: string,
+  layout: Layout = DEFAULT_LAYOUT,
+  options: RenderOptions = {},
+): void {
   const { width, height } = canvasSize(layout);
   svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
   svg.setAttribute("role", "img");
@@ -66,13 +77,15 @@ export function renderNumeral(svg: SVGSVGElement, numeral: Numeral, label: strin
   title.textContent = label;
   svg.append(title);
 
-  const dots = svgElement("g", { class: "grid-dots", "aria-hidden": "true" });
-  for (let x = 0; x <= GRID.width; x++) {
-    for (let y = 0; y <= GRID.height; y++) {
-      dots.append(svgElement("circle", { cx: toPixel(x, layout), cy: toPixel(y, layout), r: layout.unit * 0.04 }));
+  if (options.showGrid) {
+    const dots = svgElement("g", { class: "grid-dots", "aria-hidden": "true" });
+    for (let x = 0; x <= GRID.width; x++) {
+      for (let y = 0; y <= GRID.height; y++) {
+        dots.append(svgElement("circle", { cx: toPixel(x, layout), cy: toPixel(y, layout), r: layout.unit * 0.04 }));
+      }
     }
+    svg.append(dots);
   }
-  svg.append(dots);
 
   const strokes = svgElement("g", {
     class: "strokes",

@@ -1,122 +1,194 @@
+/* Light theme by default; dark theme follows the system setting. */
 :root {
-  --ink: #1b1b1f;
-  --muted: #55565e;
+  color-scheme: light dark;
   --paper: #fbfaf7;
   --panel: #ffffff;
-  --line: #d9d6cf;
-  --accent: #7a2e1d;
+  --ink: #1b1b1f;
+  --muted: #5d5e66;
+  --faint: #6c6d75;
+  --line: #e2dfd8;
+  --accent: #8a3a26;
+  --accent-ink: #ffffff;
   --error: #b00020;
-  --dot: #c9c5bc;
-  color-scheme: light;
+  --dot: #cfcbc2;
+  --code-bg: #f3f1ec;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
+
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   line-height: 1.5;
   color: var(--ink);
   background: var(--paper);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #141416;
+    --panel: #1d1d21;
+    --ink: #ececef;
+    --muted: #a8a9b3;
+    --faint: #8c8d97;
+    --line: #34343b;
+    --accent: #e3a08a;
+    --accent-ink: #1b1b1f;
+    --error: #ff7a8a;
+    --dot: #4a4a53;
+    --code-bg: #26262b;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+  }
+}
+
 * { box-sizing: border-box; }
 
 body {
   margin: 0 auto;
-  max-width: 64rem;
-  padding: 1.5rem 1rem 3rem;
+  max-width: 60rem;
+  padding: 1.25rem 1rem 2.5rem;
 }
 
-h1 { font-size: clamp(1.6rem, 4vw, 2.3rem); margin: 0 0 0.5rem; }
-h2 { font-size: 1.15rem; margin: 0 0 0.75rem; }
-.lede { color: var(--muted); max-width: 46rem; margin: 0 0 1.5rem; }
+/* ---------------------------------------------------------------- header */
 
-main {
+.masthead { text-align: center; margin-bottom: 1.25rem; }
+h1 { font-size: clamp(1.4rem, 3.5vw, 1.9rem); margin: 0; letter-spacing: -0.01em; }
+.tagline { margin: 0.25rem 0 0; color: var(--muted); }
+
+/* ---------------------------------------------------------------- stage: input + glyph */
+
+.stage {
   display: grid;
   gap: 1.25rem;
-  grid-template-columns: 1fr;
-  grid-template-areas: "controls" "glyph" "details";
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
 }
 
-@media (min-width: 48rem) {
-  main {
-    grid-template-columns: minmax(16rem, 22rem) 1fr;
-    grid-template-areas: "controls details" "glyph details";
-    align-items: start;
+@media (min-width: 44rem) {
+  .stage {
+    grid-template-columns: minmax(14rem, 1fr) 1.2fr;
+    padding: 2rem 2.5rem;
+    min-height: min(34rem, 72vh);
   }
 }
 
-.controls { grid-area: controls; }
-.glyph-panel { grid-area: glyph; }
-.details { grid-area: details; }
-
-.controls, .glyph-panel, .details {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 0.75rem;
-  padding: 1rem 1.25rem;
+label {
+  display: block;
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
-
-label { display: block; font-weight: 600; margin-bottom: 0.35rem; }
 
 input {
   width: 100%;
+  margin-top: 0.35rem;
   font: inherit;
-  font-size: 1.6rem;
+  font-size: clamp(2.2rem, 7vw, 3.2rem);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
-  padding: 0.4rem 0.6rem;
+  letter-spacing: 0.02em;
+  padding: 0.25rem 0.75rem;
   border: 2px solid var(--line);
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   color: var(--ink);
-  background: #fff;
+  background: var(--paper);
 }
 input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
 input[aria-invalid="true"] { border-color: var(--error); }
 
-.error { color: var(--error); min-height: 1.5em; margin: 0.35rem 0 0.5rem; font-size: 0.95rem; }
+.hint { margin: 0.3rem 0 0; color: var(--faint); font-size: 0.85rem; }
+.error { color: var(--error); min-height: 1.5em; margin: 0.25rem 0 0.5rem; font-size: 0.95rem; }
 
-.examples { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; color: var(--muted); }
+.examples { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .examples button {
   font: inherit;
   font-variant-numeric: tabular-nums;
-  padding: 0.3rem 0.8rem;
+  padding: 0.3rem 0.85rem;
   border: 1px solid var(--accent);
   border-radius: 999px;
-  background: #fff;
+  background: transparent;
   color: var(--accent);
   cursor: pointer;
 }
-.examples button:hover { background: var(--accent); color: #fff; }
+.examples button:hover { background: var(--accent); color: var(--accent-ink); }
 .examples button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-#glyph { display: block; width: 100%; max-width: 20rem; height: auto; margin: 0 auto; }
+.glyph-frame {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#glyph {
+  display: block;
+  height: min(48vh, 26rem);
+  width: auto;
+  max-width: 100%;
+  aspect-ratio: 168 / 228;
+}
+@media (min-width: 44rem) {
+  #glyph { height: min(60vh, 28rem); }
+}
 #glyph .grid-dots { fill: var(--dot); }
 #glyph .strokes { stroke: var(--ink); }
-.stale #glyph, .stale .details table, .stale .details details { opacity: 0.25; }
 
-table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
-th, td { text-align: left; padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--line); }
-th { color: var(--muted); font-weight: 600; font-size: 0.9rem; }
-tr.zero td { color: var(--muted); }
+/* Last valid result stays visible but dimmed while the input is invalid. */
+.stale #glyph, .stale .about-table, .stale details { opacity: 0.25; }
 
-.convention { margin: 1rem 0; }
-.quadrants {
-  display: grid;
-  grid-template-columns: repeat(2, max-content);
+/* ---------------------------------------------------------------- secondary: how it works */
+
+.about {
+  margin-top: 2rem;
+  color: var(--muted);
   font-size: 0.95rem;
 }
-.quadrants span { padding: 0.2rem 0.75rem; }
+.about h2 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  margin: 0 0 0.75rem;
+}
+.about strong { color: var(--ink); font-weight: 600; }
+.about-grid { display: grid; gap: 1.5rem; }
+@media (min-width: 44rem) {
+  .about-grid { grid-template-columns: 1fr 1fr; }
+}
+.about-text p { margin: 0 0 1rem; }
+
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 0.3rem 0.5rem; border-bottom: 1px solid var(--line); }
+th { color: var(--faint); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+td { color: var(--ink); }
+tr.zero td { color: var(--faint); }
+
+.convention { margin: 0; }
+.quadrants { display: grid; grid-template-columns: repeat(2, max-content); color: var(--ink); }
+.quadrants span { padding: 0.15rem 0.75rem; }
 .quadrants span:nth-child(odd) { border-right: 2px solid var(--ink); text-align: right; }
 .quadrants span:nth-child(-n + 2) { border-bottom: 1px solid var(--line); }
-.convention figcaption { color: var(--muted); font-size: 0.85rem; }
+.convention figcaption { color: var(--faint); font-size: 0.8rem; margin-top: 0.25rem; }
 
-details { margin-top: 1rem; }
-summary { cursor: pointer; font-weight: 600; }
+details { margin-top: 1.5rem; }
+summary { cursor: pointer; font-weight: 600; color: var(--muted); }
+summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 #json {
   white-space: pre-wrap;
   word-break: break-all;
-  background: #f3f1ec;
+  background: var(--code-bg);
+  color: var(--ink);
   padding: 0.75rem;
   border-radius: 0.5rem;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 
-footer { margin-top: 2rem; color: var(--muted); font-size: 0.9rem; }
+/* ---------------------------------------------------------------- footer */
+
+footer { margin-top: 2.5rem; color: var(--faint); font-size: 0.85rem; text-align: center; }
 a { color: var(--accent); }
 
 .visually-hidden {
