@@ -23,7 +23,7 @@ step() {
 }
 
 step "Judge unit tests" "$PYTHON" -m pytest
-step "Digit chart is up to date" "$PYTHON" scripts/render_digit_chart.py --check
+step "Generated SVGs are up to date" "$PYTHON" scripts/render_digit_chart.py --check
 step "Conformance of all implementations" "$PYTHON" -m judge.runner --all
 
 web_checks() {

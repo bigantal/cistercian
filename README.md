@@ -1,59 +1,104 @@
 # Cistercian — polyglot numeral playground
 
-Medieval Cistercian numerals write any integer from 1 to 9,999 as a single glyph: four digit motifs arranged around a vertical stem. This repository defines the glyph geometry precisely and tests encoders written in several languages against it.
+<img src="docs/example-1986.svg" alt="The Cistercian numeral for 1986" width="96" align="right">
 
-> **Status:** work in progress (Stage 3: TypeScript implementation and website). The full README arrives with the website and CI stages.
+In the Middle Ages, Cistercian monks wrote any number from **1 to 9,999 as a single glyph**: a vertical stem with one small mark in each corner. The upper right holds the units, the upper left the tens, the lower right the hundreds and the lower left the thousands. A zero digit leaves its corner empty. The glyph on the right is **1986**:
 
-- [SPECIFICATION.md](SPECIFICATION.md): convention, grid, digit table and JSON contract v1
-- [docs/references.md](docs/references.md): historical sources and variants
-- [docs/digit-chart.svg](docs/digit-chart.svg): every digit in every quadrant, generated from the reference
+- a detached outer stroke for units 6;
+- a hook joined to the stem for tens 8;
+- a closed square for hundreds 9;
+- a bottom bar for thousands 1.
 
-## Running the tests (macOS / Linux)
+This repository defines the glyph geometry precisely, using sources checked against King's *The Ciphers of the Monks*. It then implements the same encoder independently in several languages, and checks every implementation against one shared test suite for all 9,999 numbers.
 
-You need Python 3.10 or later.
+**▶ Try it: [bigantal.github.io/cistercian](https://bigantal.github.io/cistercian/)**: an interactive explorer drawn with SVG by the TypeScript encoder in this repository.
+
+## Quick start (macOS / Linux)
+
+You need Python 3.10 or later. For the TypeScript implementation and the website, you also need Node.js 20.19 or later with npm.
 
 ```bash
+git clone https://github.com/bigantal/cistercian.git
+cd cistercian
 python3 -m venv .venv
 .venv/bin/pip install -r requirements-dev.txt
-./scripts/test-all.sh                         # everything below, with a summary
-.venv/bin/python -m pytest                    # judge unit tests only
-python3 -m judge.runner --language python     # one implementation, all 9,999 numbers
-python3 -m judge.runner --all                 # every implementation
+./scripts/test-all.sh
 ```
 
-`test-all.sh` exits 0 when everything passes, 1 on any failure, and 3 when an implementation could not be tested because its toolchain is missing.
+`test-all.sh` runs these steps:
+
+- the judge's unit tests;
+- a check that the generated SVGs are up to date;
+- conformance tests for every implementation;
+- the website's tests and build.
+
+It exits with:
+
+- **0** when everything passes;
+- **1** on any failure;
+- **3** when nothing failed but something could not be tested because a toolchain is missing.
+
+Single steps:
+
+```bash
+.venv/bin/python -m pytest                    # judge unit tests
+python3 -m judge.runner --language python     # one implementation, all 9,999 numbers
+python3 -m judge.runner --all                 # every implementation
+python3 -m judge.reference 1986               # reference geometry of one number
+```
 
 ## Implementations
 
-| Language | Directory | Toolchain |
-|---|---|---|
-| Python | [implementations/python](implementations/python) | Python ≥ 3.10, standard library only |
-| TypeScript | [implementations/typescript](implementations/typescript) | Node.js ≥ 20.19, npm (TypeScript 7 dev dependency) |
+| Language | Directory | Toolchain | Approach |
+|---|---|---|---|
+| Python | [implementations/python](implementations/python) | Python ≥ 3.10, standard library only | stroke `Enum`, quadrant dataclass with one affine map |
+| TypeScript | [implementations/typescript](implementations/typescript) | Node.js ≥ 20.19, npm | stroke bitmasks, quadrants as point transforms; also powers the website |
 
-Each implementation is independent of the judge. It follows the CLI protocol and manifest format in [SPECIFICATION.md](SPECIFICATION.md) §11–12.
+The implementations share no code with each other or with the judge. Each one provides:
 
-Print the reference geometry of a number:
+- an importable `encode` function;
+- a thin command-line adapter that follows the [CLI protocol](SPECIFICATION.md#11-cli-protocol-every-implementation);
+- a [`manifest.json`](SPECIFICATION.md#12-implementation-manifest) that tells the runner how to build and run it.
 
-```bash
-python3 -m judge.reference 1986
+To add a language, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## The geometry contract
+
+A numeral is a set of line segments on a small integer grid: x from 0 to 2 and y from 0 to 3, with the origin at the top left. The stem runs from (1,0) to (1,3). This is the number 1:
+
+```json
+{"segments":[[[1,0],[1,3]],[[1,0],[2,0]]]}
 ```
 
-After any change to `judge/reference.py`, regenerate the chart:
+Outputs are compared after **normalization**. Every segment is split into unit-length edges, and each edge's endpoints are sorted. So segment order, endpoint direction, and splitting or merging collinear lines don't matter, while any difference in the drawn strokes does. Strokes that don't touch are never joined.
 
-```bash
-python3 scripts/render_digit_chart.py
+The full rules are in [SPECIFICATION.md](SPECIFICATION.md), along with the [digit chart](docs/digit-chart.svg) for every digit in every corner.
+
+## How it fits together
+
+```text
+fixtures/known-values.json ──┐  hand-transcribed ground truth (King 2001 + reviewed examples)
+                             ▼
+judge/reference.py ──► judge/geometry.py ◄── implementations/*/  (CLI, one process per batch)
+  reference encoder      validation +          python, typescript, …
+                         normalization
+                             ▲
+judge/runner.py ─────────────┘  builds, runs and compares every implementation
+
+implementations/typescript/src/encoder.ts ──► web/  (Vite + SVG, imported directly, no copy)
 ```
 
-The test suite fails if you forget.
+More detail: [docs/architecture.md](docs/architecture.md).
 
-## Website
+## Documentation
 
-The website in [`web/`](web) is a static Vite + TypeScript page with SVG rendering. It imports the encoder from `implementations/typescript/src/encoder.ts` through the `cistercian-encoder` alias. The page uses only relative asset paths, so the built `web/dist/` works when served from any directory.
+- [SPECIFICATION.md](SPECIFICATION.md): convention, grid, digit table, JSON contract, CLI protocol, manifest format
+- [docs/references.md](docs/references.md): historical sources, the chosen convention and known variants
+- [docs/decisions/](docs/decisions): architecture decision records
+- [docs/architecture.md](docs/architecture.md): components and test layers
+- [docs/setup.md](docs/setup.md): repository, CI and GitHub Pages setup for maintainers
+- [CONTRIBUTING.md](CONTRIBUTING.md): adding a language, reporting a historical error
 
-```bash
-cd web
-npm ci
-npm run dev      # local development server
-npm test         # renderer and input tests (Vitest)
-npm run build    # static site in web/dist/
-```
+## Licence
+
+[MIT](LICENSE). Historical sources are cited, not reproduced. The digit chart and all glyphs are generated from this repository's own data.
