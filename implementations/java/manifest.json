@@ -1,0 +1,10 @@
+{
+  "language": "Java",
+  "requires": [
+    {"tool": "javac", "min_version": "25"},
+    {"tool": "java", "min_version": "25"}
+  ],
+  "build": ["javac", "--release", "25", "-Xlint:all", "-Werror", "-d", "build/classes",
+            "src/cistercian/Cistercian.java", "src/cistercian/Main.java"],
+  "run": ["java", "-XX:+UseSerialGC", "-XX:TieredStopAtLevel=1", "-cp", "build/classes", "cistercian.Main"]
+}

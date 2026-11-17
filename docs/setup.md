@@ -25,6 +25,7 @@ Go to **Settings → Rules → Rulesets** (or **Branches**) and add a rule for `
   - `Judge + Python 3.13`
   - `TypeScript conformance (Node 20.19)`
   - `TypeScript conformance (Node 24)`
+  - `Java conformance (JDK 25)`
   - `Website tests + build`
 - blocks force pushes and deletion.
 

@@ -15,7 +15,12 @@ This repository defines the glyph geometry precisely, using sources checked agai
 
 ## Quick start (macOS / Linux)
 
-You need Python 3.10 or later. For the TypeScript implementation and the website, you also need Node.js 20.19 or later with npm.
+You need Python 3.10 or later. Each implementation also needs its own toolchain:
+
+- **TypeScript and the website:** Node.js 20.19 or later, with npm.
+- **Java:** a JDK, version 25 or later.
+
+If a toolchain is missing, that implementation is reported as not tested rather than as passing.
 
 ```bash
 git clone https://github.com/bigantal/cistercian.git
@@ -53,6 +58,7 @@ python3 -m judge.reference 1986               # reference geometry of one number
 |---|---|---|---|
 | Python | [implementations/python](implementations/python) | Python ≥ 3.10, standard library only | stroke `Enum`, quadrant dataclass with one affine map |
 | TypeScript | [implementations/typescript](implementations/typescript) | Node.js ≥ 20.19, npm | stroke bitmasks, quadrants as point transforms; also powers the website |
+| Java | [implementations/java](implementations/java) | JDK ≥ 25, plain `javac` | `Stroke`/`Place` enums, `switch` expression to `EnumSet`, records |
 
 The implementations share no code with each other or with the judge. Each one provides:
 
