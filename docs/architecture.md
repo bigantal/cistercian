@@ -55,7 +55,7 @@ Vite's `base: "./"` makes every asset URL relative, so `web/dist/` works at a Gi
 
 | Workflow | Trigger | Jobs | Permissions |
 |---|---|---|---|
-| `.github/workflows/test.yml` | pull requests, including from forks; pushes to branches other than `main`; called by `deploy.yml` | Python 3.10 and 3.13 (judge tests, SVG check, Python conformance); TypeScript conformance on Node 20.19 and 24; Java conformance on JDK 25; website tests and build | `contents: read` only |
+| `.github/workflows/test.yml` | pull requests, including from forks; pushes to branches other than `main`; called by `deploy.yml` | Python 3.10 and 3.13 (judge tests, SVG check, Python conformance); TypeScript conformance on Node 20.19 and 24; Java conformance on JDK 25; Go formatting, vet, unit tests and conformance on Go 1.26 and 1.27; website tests and build | `contents: read` only |
 | `.github/workflows/deploy.yml` | pushes to `main`, or a manual run | runs the full `test.yml`, then builds the site, then deploys to Pages | the deploy job alone gets `pages: write` and `id-token: write` |
 
 Actions are pinned to commit SHAs, and checkouts don't keep credentials. No workflow uses `pull_request_target` or any secrets.

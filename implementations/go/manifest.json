@@ -1,0 +1,6 @@
+{
+  "language": "Go",
+  "requires": [{"tool": "go", "min_version": "1.26", "version_args": ["version"]}],
+  "build": ["go", "build", "-trimpath", "-o", "build/cistercian", "./cmd/cistercian"],
+  "run": ["./build/cistercian"]
+}

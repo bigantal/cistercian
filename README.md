@@ -19,6 +19,7 @@ You need Python 3.10 or later. Each implementation also needs its own toolchain:
 
 - **TypeScript and the website:** Node.js 20.19 or later, with npm.
 - **Java:** a JDK, version 25 or later.
+- **Go:** Go 1.26 or later.
 
 If a toolchain is missing, that implementation is reported as not tested rather than as passing.
 
@@ -59,6 +60,7 @@ python3 -m judge.reference 1986               # reference geometry of one number
 | Python | [implementations/python](implementations/python) | Python ≥ 3.10, standard library only | stroke `Enum`, quadrant dataclass with one affine map |
 | TypeScript | [implementations/typescript](implementations/typescript) | Node.js ≥ 20.19, npm | stroke bitmasks, quadrants as point transforms; also powers the website |
 | Java | [implementations/java](implementations/java) | JDK ≥ 25, plain `javac` | `Stroke`/`Place` enums, `switch` expression to `EnumSet`, records |
+| Go | [implementations/go](implementations/go) | Go ≥ 1.26, standard library only | `iota` bit flags, lookup table built in `init()`, `encoding/json` on array types |
 
 The implementations share no code with each other or with the judge. Each one provides:
 

@@ -26,6 +26,8 @@ Go to **Settings → Rules → Rulesets** (or **Branches**) and add a rule for `
   - `TypeScript conformance (Node 20.19)`
   - `TypeScript conformance (Node 24)`
   - `Java conformance (JDK 25)`
+  - `Go conformance (Go 1.26)`
+  - `Go conformance (Go 1.27)`
   - `Website tests + build`
 - blocks force pushes and deletion.
 

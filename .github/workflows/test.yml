@@ -91,6 +91,34 @@ jobs:
       - name: Conformance — Java implementation
         run: python -m judge.runner --language java
 
+  go:
+    name: Go conformance (Go ${{ matrix.go }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ["1.26", "1.27"]   # the two supported Go releases
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+        with:
+          go-version: ${{ matrix.go }}
+          cache: false   # no dependencies to cache
+      - name: gofmt, vet and unit tests
+        working-directory: implementations/go
+        run: |
+          test -z "$(gofmt -l .)" || { gofmt -l .; echo "run gofmt -w"; exit 1; }
+          go vet ./...
+          go test ./...
+      - name: Conformance — Go implementation
+        run: python -m judge.runner --language go
+
   website:
     name: Website tests + build
     runs-on: ubuntu-latest
