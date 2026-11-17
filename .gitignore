@@ -5,3 +5,5 @@ __pycache__/
 /docs/PROJECT_KICKOFF.md
 node_modules/
 dist/
+/AGENTS.md
+/CLAUDE.md
